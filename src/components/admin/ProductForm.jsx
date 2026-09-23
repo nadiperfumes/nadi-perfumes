@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
-import { X, Upload, Loader } from 'lucide-react'
+import { X, Upload, Loader, Eye, EyeOff, Trash2 } from 'lucide-react'
 
 export default function ProductForm({ produto, onClose }) {
   const [formData, setFormData] = useState({
@@ -72,6 +72,39 @@ export default function ProductForm({ produto, onClose }) {
     },
   })
 
+  const deleteMutation = useMutation({
+    mutationFn: async (id) => {
+      const { error } = await supabase
+        .from('produtos')
+        .delete()
+        .eq('id', id)
+      
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['admin-produtos'])
+      queryClient.invalidateQueries(['produtos'])
+      onClose()
+    },
+  })
+
+  const toggleActiveMutation = useMutation({
+    mutationFn: async ({ id, ativo }) => {
+      const { error } = await supabase
+        .from('produtos')
+        .update({ ativo: !ativo })
+        .eq('id', id)
+      
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['admin-produtos'])
+      queryClient.invalidateQueries(['produtos'])
+      // Atualizar formData localmente
+      setFormData(prev => ({ ...prev, ativo: !prev.ativo }))
+    },
+  })
+
   const handleImageChange = (e) => {
     const file = e.target.files[0]
     if (file) {
@@ -87,6 +120,16 @@ export default function ProductForm({ produto, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     saveMutation.mutate(formData)
+  }
+
+  const handleDelete = () => {
+    if (window.confirm('Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita.')) {
+      deleteMutation.mutate(produto.id)
+    }
+  }
+
+  const handleToggleActive = () => {
+    toggleActiveMutation.mutate({ id: produto.id, ativo: formData.ativo })
   }
 
   return (
@@ -220,22 +263,58 @@ export default function ProductForm({ produto, onClose }) {
         </div>
 
         {/* Botões */}
-        <div className="flex justify-end space-x-4 pt-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            disabled={saveMutation.isPending || uploading}
-            className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-          >
-            {(saveMutation.isPending || uploading) && <Loader className="w-4 h-4 animate-spin" />}
-            <span>{produto ? 'Atualizar' : 'Criar'}</span>
-          </button>
+        <div className="space-y-4 pt-4">
+          {/* Botões de Ação Principais */}
+          <div className="flex justify-end space-x-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={saveMutation.isPending || uploading}
+              className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            >
+              {(saveMutation.isPending || uploading) && <Loader className="w-4 h-4 animate-spin" />}
+              <span>{produto ? 'Atualizar' : 'Criar'}</span>
+            </button>
+          </div>
+
+          {/* Botões de Ocultar e Excluir (apenas para produtos existentes) */}
+          {produto && (
+            <div className="flex justify-between items-center pt-4 border-t">
+              <button
+                type="button"
+                onClick={handleToggleActive}
+                disabled={toggleActiveMutation.isPending}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition disabled:opacity-50 ${
+                  formData.ativo
+                    ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                    : 'bg-green-100 text-green-700 hover:bg-green-200'
+                }`}
+              >
+                {formData.ativo ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                <span>{formData.ativo ? 'Ocultar Produto' : 'Mostrar Produto'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleteMutation.isPending}
+                className="flex items-center space-x-2 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition disabled:opacity-50"
+              >
+                {deleteMutation.isPending ? (
+                  <Loader className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Trash2 className="w-5 h-5" />
+                )}
+                <span>Excluir Produto</span>
+              </button>
+            </div>
+          )}
         </div>
       </form>
     </div>

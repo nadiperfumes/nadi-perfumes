@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste de Login</title>
+</head>
+<body>
+    <h1>Teste de Login Supabase</h1>
+    <button onclick="testarLogin()">Testar Login</button>
+    <div id="resultado"></div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+        const supabaseUrl = 'https://wdfadojamulkxogapphf.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkZmFkb2phbXVsa3hvZ2FwcGhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1OTEwNTAsImV4cCI6MjA5MzE2NzA1MH0.2Sa6QVwhaLZ0MNXFv32b4hDGrvQhtx-egtLR-qsJ4-M'
+        
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        window.testarLogin = async function() {
+            const resultado = document.getElementById('resultado')
+            resultado.innerHTML = 'Testando...'
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: 'aguilherme@concent.com.br',
+                    password: 'Huehue@00'
+                })
+
+                if (error) {
+                    resultado.innerHTML = `<p style="color: red;">ERRO: ${error.message}</p>`
+                    console.error('Erro completo:', error)
+                } else {
+                    resultado.innerHTML = `<p style="color: green;">SUCESSO! Usuário logado: ${data.user.email}</p>`
+                    console.log('Dados do usuário:', data)
+                }
+            } catch (err) {
+                resultado.innerHTML = `<p style="color: red;">ERRO: ${err.message}</p>`
+                console.error('Erro:', err)
+            }
+        }
+    </script>
+</body>
+</html>

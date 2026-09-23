@@ -1,30 +1,39 @@
-import { Instagram, Phone, Mail } from 'lucide-react'
+import { InstagramLogo, Phone, Heart } from '@phosphor-icons/react'
 
 export default function Footer({ config }) {
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Sobre */}
+    <footer className="bg-green-deep text-green-pale">
+      {/* Linha dourada no topo */}
+      <div className="h-[1px] bg-gradient-to-r from-transparent via-gold to-transparent" />
+
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+
+          {/* Logo e descrição */}
           <div>
-            <h3 className="text-xl font-bold mb-4">{config?.nome_loja || 'Minha Loja'}</h3>
-            <p className="text-gray-400">
-              {config?.descricao_loja || 'Os melhores produtos você encontra aqui!'}
+            <img
+              src="/logo.png"
+              alt="Nadi Perfumes"
+              className="w-24 mb-5"
+              style={{ filter: 'brightness(0) invert(1)' }}
+            />
+            <p className="text-green-pale/70 text-sm leading-relaxed font-sans font-light max-w-[240px]">
+              {config?.descricao_loja || 'Fragrâncias que contam histórias e marcam momentos especiais.'}
             </p>
           </div>
 
           {/* Contato */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Contato</h3>
-            <div className="space-y-3">
+            <h4 className="font-serif text-lg text-gold mb-5">Contato</h4>
+            <div className="space-y-4">
               {config?.whatsapp && (
                 <a
                   href={`https://wa.me/${config.whatsapp.replace(/\D/g, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-gray-400 hover:text-white transition"
+                  className="flex items-center gap-3 text-green-pale/70 hover:text-gold transition-colors duration-300 text-sm font-sans"
                 >
-                  <Phone className="w-5 h-5" />
+                  <Phone size={16} />
                   <span>{config.whatsapp}</span>
                 </a>
               )}
@@ -33,27 +42,27 @@ export default function Footer({ config }) {
                   href={config.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-gray-400 hover:text-white transition"
+                  className="flex items-center gap-3 text-green-pale/70 hover:text-gold transition-colors duration-300 text-sm font-sans"
                 >
-                  <Instagram className="w-5 h-5" />
+                  <InstagramLogo size={16} />
                   <span>Instagram</span>
                 </a>
               )}
             </div>
           </div>
 
-          {/* Redes Sociais */}
+          {/* Redes sociais */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Siga-nos</h3>
-            <div className="flex space-x-4">
+            <h4 className="font-serif text-lg text-gold mb-5">Siga-nos</h4>
+            <div className="flex gap-4">
               {config?.instagram && (
                 <a
                   href={config.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-gray-800 p-3 rounded-full hover:bg-pink-600 transition"
+                  className="w-10 h-10 border border-green-pale/30 flex items-center justify-center hover:border-gold hover:text-gold transition-all duration-300 text-green-pale/70"
                 >
-                  <Instagram className="w-6 h-6" />
+                  <InstagramLogo size={18} />
                 </a>
               )}
               {config?.whatsapp && (
@@ -61,17 +70,23 @@ export default function Footer({ config }) {
                   href={`https://wa.me/${config.whatsapp.replace(/\D/g, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-gray-800 p-3 rounded-full hover:bg-green-600 transition"
+                  className="w-10 h-10 border border-green-pale/30 flex items-center justify-center hover:border-gold hover:text-gold transition-all duration-300 text-green-pale/70"
                 >
-                  <Phone className="w-6 h-6" />
+                  <Phone size={18} />
                 </a>
               )}
             </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} {config?.nome_loja || 'Minha Loja'}. Todos os direitos reservados.</p>
+        {/* Bottom */}
+        <div className="border-t border-green-pale/10 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-green-pale/40 text-xs font-sans">
+            &copy; {new Date().getFullYear()} {config?.nome_loja || 'Nadi Perfumes'}. Todos os direitos reservados.
+          </p>
+          <p className="text-green-pale/40 text-xs font-sans flex items-center gap-1">
+            Feito com <Heart size={12} className="text-gold" /> com amor
+          </p>
         </div>
       </div>
     </footer>

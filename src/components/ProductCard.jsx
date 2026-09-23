@@ -1,4 +1,5 @@
-import { ShoppingCart } from 'lucide-react'
+import { motion } from 'motion/react'
+import { WhatsappLogo, ShoppingBag } from '@phosphor-icons/react'
 
 export default function ProductCard({ produto, whatsapp }) {
   const handleWhatsAppClick = () => {
@@ -9,46 +10,65 @@ export default function ProductCard({ produto, whatsapp }) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
-      <div className="aspect-square overflow-hidden bg-gray-200">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+      className="group bg-warm-white border border-green-pale flex flex-col"
+    >
+      {/* Imagem */}
+      <div className="relative aspect-square overflow-hidden bg-green-pale">
         {produto.imagem_url ? (
           <img
             src={produto.imagem_url}
             alt={produto.nome}
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
-            <ShoppingCart className="w-16 h-16" />
+          <div className="w-full h-full flex items-center justify-center">
+            <ShoppingBag size={40} className="text-green-mid opacity-40" />
           </div>
         )}
+
+        {/* Overlay ao hover */}
+        <div className="absolute inset-0 bg-green-deep opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
+
+        {/* Badge categoria */}
+        {produto.categoria && (
+          <span className="absolute top-3 left-3 bg-green-forest text-green-pale text-[10px] tracking-widest uppercase px-3 py-1 font-sans">
+            {produto.categoria}
+          </span>
+        )}
       </div>
-      
-      <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+
+      {/* Conteúdo */}
+      <div className="p-5 flex flex-col flex-1">
+        <h3 className="font-serif text-xl text-nadi-dark leading-tight mb-2">
           {produto.nome}
         </h3>
-        
+
         {produto.descricao && (
-          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+          <p className="text-nadi-mid text-sm leading-relaxed mb-4 line-clamp-2 font-sans font-light flex-1">
             {produto.descricao}
           </p>
         )}
-        
-        <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-indigo-600">
+
+        {/* Preço e Botão */}
+        <div className="flex items-center justify-between pt-4 border-t border-green-pale mt-auto">
+          <span className="font-serif text-2xl text-green-forest">
             R$ {produto.preco.toFixed(2)}
           </span>
-          
+
           <button
             onClick={handleWhatsAppClick}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold transition flex items-center space-x-2"
+            className="flex items-center gap-2 bg-green-forest text-green-pale px-4 py-2 text-xs tracking-wider uppercase font-sans hover:bg-green-deep active:scale-[0.98] transition-all duration-300"
           >
-            <ShoppingCart className="w-4 h-4" />
+            <WhatsappLogo size={16} />
             <span>Comprar</span>
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
